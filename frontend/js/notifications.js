@@ -1,7 +1,7 @@
 import { Notifications } from 'expo';
 import * as Permissions from 'expo-permissions';
 
-const PUSH_ENDPOINT = '//bigrip.ocf.berkeley.edu/register';
+const PUSH_ENDPOINT = '//bigrip.ocf.berkeley.edu:5000/new';
 
 /**
  * Connects to the server for push notifications.

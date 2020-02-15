@@ -40,11 +40,15 @@ def login_required(test):
 # Controllers.
 #----------------------------------------------------------------------------#
 
-
+    
 @app.route('/')
 def home():
     return render_template('pages/placeholder.home.html')
 
+@app.route('/notify')
+def notify():
+    notify_type = request.args.get('type')
+    return '''<h1>notified {}</h1>'''.format(notify_type)
 
 @app.route('/about')
 def about():
@@ -97,7 +101,7 @@ if not app.debug:
 
 # Default port:
 if __name__ == '__main__':
-    app.run()
+    app.run(host='bigrip.ocf.berkeley.edu')
 
 # Or specify port manually:
 '''
