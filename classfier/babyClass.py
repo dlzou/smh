@@ -5,7 +5,11 @@ import glob
 import os
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_squared_log_error
 
+
+def evaluate(y_pred, y_true):
+    return np.sqrt(mean_squared_log_error(y_pred, y_true))
 
 
 def parser(label, fileName):
@@ -64,7 +68,12 @@ X_train_sound, X_test_sound, Y_train_sound, Y_test_sound = train_test_split(
     X, Y, test_size=0.2, random_state=0)
 
 print(len(X_train_sound), len(Y_train_sound))    
+linear_model = LinearRegression(fit_intercept=True)
 
+linear_model = linear_model.fit(X_train_sound, Y_train_sound)
+y_val_pred = linear_model.predict(X_test_sound)
+y_val_pred = y_val_pred.clip(min=0)
+print(evaluate(y_val_pred, Y_test_sound))
 
 #temp = train.apply(parser, axis=1)
 #temp.columns = ['feature', 'label']
