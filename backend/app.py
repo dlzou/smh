@@ -9,6 +9,7 @@ from logging import Formatter, FileHandler
 from forms import *
 import os
 from sys import stderr
+import json
 
 #----------------------------------------------------------------------------#
 # Data
@@ -51,15 +52,17 @@ def login_required(test):
 def home():
     return render_template('pages/placeholder.home.html')
 
-@app.route('/notify')
+@app.route('/notify', methods=['POST'])
 def notify():
     notify_type = request.args.get('type')
     print(notify_type, 'NOTIFIED', file=stderr)
     return '''<h1>notified {}</h1>'''.format(notify_type)
 
-@app.route('/register')
+@app.route('/register', methods=['POST'])
 def register():
-    tokens.append(request.args.get('token'))
+    tokens.append(request.json['token']['value'])
+    print(request.json['token']['value'], 'TOKEN RECEIVED', file=stderr)
+    return '''<h1>token received. tokens now {}'''.format(tokens)
 
 @app.route('/about')
 def about():
