@@ -30,7 +30,8 @@ def main():
 
         # run classifier
         baby_state = 'hungry'
-        r = requests.post('bigrip.ocf.berkeley.edu:5000/notify', data={'type': baby_state})
+        print(baby_state)
+        r = requests.post('http://bigrip.ocf.berkeley.edu:5000/notify', data={'type': baby_state})
         print(r.status_code)
 
 
