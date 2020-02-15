@@ -32,8 +32,8 @@ def main():
         baby_state = 'hungry'
         print(baby_state)
         payload = {'type': baby_state}
-        headers = {'content-type': 'application/json'}
-        r = requests.post('http://bigrip.ocf.berkeley.edu:5000/notify', data=payload, headers=headers)
+        headers = {'Accept': 'application/json', 'Content-Type': 'application/json'}
+        r = requests.post('http://bigrip.ocf.berkeley.edu:5000/notify', json=payload, headers=headers)
         print(r.status_code)
 
 
