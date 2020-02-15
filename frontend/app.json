@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "Blank Template (TypeScript)",
+    "name": "BabyInterpreter",
     "slug": "baby-interpreter",
     "privacy": "public",
     "sdkVersion": "35.0.0",

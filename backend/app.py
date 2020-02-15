@@ -10,6 +10,12 @@ from forms import *
 import os
 from sys import stderr
 import json
+from exponent_server_sdk import PushClient
+from exponent_server_sdk import PushMessage
+from exponent_server_sdk import PushResponseError
+from exponent_server_sdk import PushServerError
+from requests.exceptions import ConnectionError
+from requests.exceptions import HTTPError
 
 #----------------------------------------------------------------------------#
 # Data
@@ -43,6 +49,55 @@ def login_required(test):
             return redirect(url_for('login'))
     return wrap
 '''
+
+# Methods
+
+# Basic arguments. You should extend this function with the push features you
+# want to use, or simply pass in a `PushMessage` object.
+def send_push_message(token, message, extra=None):
+    try:
+        response = PushClient().publish(
+            PushMessage(to=token,
+                        body=message,
+                        data=extra))
+    except PushServerError as exc:
+        # Encountered some likely formatting/validation error.
+        rollbar.report_exc_info(
+            extra_data={
+                'token': token,
+                'message': message,
+                'extra': extra,
+                'errors': exc.errors,
+                'response_data': exc.response_data,
+            })
+        raise
+    except (ConnectionError, HTTPError) as exc:
+        # Encountered some Connection or HTTP error - retry a few times in
+        # case it is transient.
+        rollbar.report_exc_info(
+            extra_data={'token': token, 'message': message, 'extra': extra})
+        raise self.retry(exc=exc)
+
+    try:
+        # We got a response back, but we don't know whether it's an error yet.
+        # This call raises errors so we can handle them with normal exception
+        # flows.
+        response.validate_response()
+    except DeviceNotRegisteredError:
+        # Mark the push token as inactive
+        from notifications.models import PushToken
+        PushToken.objects.filter(token=token).update(active=False)
+    except PushResponseError as exc:
+        # Encountered some other per-notification error.
+        rollbar.report_exc_info(
+            extra_data={
+                'token': token,
+                'message': message,
+                'extra': extra,
+                'push_response': exc.push_response._asdict(),
+            })
+        raise self.retry(exc=exc)
+
 #----------------------------------------------------------------------------#
 # Controllers.
 #----------------------------------------------------------------------------#
@@ -52,10 +107,15 @@ def login_required(test):
 def home():
     return render_template('pages/placeholder.home.html')
 
-@app.route('/notify', methods=['POST'])
+@app.route('/notify')
 def notify():
     notify_type = request.args.get('type')
     print(notify_type, 'NOTIFIED', file=stderr)
+    if (len(tokens) > 0):
+        send_push_message(tokens[0], 'Testing')
+    else:
+        print('Notification not sent: no token found', file=stderr)
+        
     return '''<h1>notified {}</h1>'''.format(notify_type)
 
 @app.route('/register', methods=['POST'])
