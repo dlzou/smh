@@ -1,0 +1,26 @@
+{
+  "name": "baby-interpreter",
+  "version": "1.0.0",
+  "description": "Interprets baby sounds to predict what they mean",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "cmd": ""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dlzou/baby-interpreter.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/dlzou/baby-interpreter/issues"
+  },
+  "homepage": "https://github.com/dlzou/baby-interpreter#readme",
+  "dependencies": {
+    "npm": "^6.13.7"
+  },
+  "devDependencies": {
+    "expo-cli": "^3.13.1"
+  }
+}
