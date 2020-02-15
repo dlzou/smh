@@ -26,12 +26,14 @@ def main():
                 time.sleep(0.5)
 
         record_file(AudioFormat.CD, filename=FILENAME, wait=wait, filetype='wav')
-        board.button.wait_for_press()
+        # board.button.wait_for_press()
 
         # run classifier
         baby_state = 'hungry'
         print(baby_state)
-        r = requests.post('http://bigrip.ocf.berkeley.edu:5000/notify', data={'type': baby_state})
+        payload = {'type': baby_state}
+        headers = {'content-type': 'application/json'}
+        r = requests.post('http://bigrip.ocf.berkeley.edu:5000/notify', data=payload, headers=headers)
         print(r.status_code)
 
 
