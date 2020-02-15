@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "640386607803",
+    "firebase_url": "https://baby-monitor-yuh.firebaseio.com",
+    "project_id": "baby-monitor-yuh",
+    "storage_bucket": "baby-monitor-yuh.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:640386607803:android:9cbc95fc172d363827d79e",
+        "android_client_info": {
+          "package_name": "org.bananiumlabs.babyinterpreter"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "640386607803-kf4vlqr87ho5rui2qi0hjhaorvmjob3p.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDdbmqYIoR1p5ymoiuZuBEjBVX9vdm0EBM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "640386607803-kf4vlqr87ho5rui2qi0hjhaorvmjob3p.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

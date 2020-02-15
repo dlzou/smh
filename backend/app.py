@@ -8,6 +8,12 @@ import logging
 from logging import Formatter, FileHandler
 from forms import *
 import os
+from sys import stderr
+
+#----------------------------------------------------------------------------#
+# Data
+#----------------------------------------------------------------------------#
+tokens = []
 
 #----------------------------------------------------------------------------#
 # App Config.
@@ -48,30 +54,16 @@ def home():
 @app.route('/notify')
 def notify():
     notify_type = request.args.get('type')
+    print(notify_type, 'NOTIFIED', file=stderr)
     return '''<h1>notified {}</h1>'''.format(notify_type)
+
+@app.route('/register')
+def register():
+    tokens.append(request.args.get('token'))
 
 @app.route('/about')
 def about():
     return render_template('pages/placeholder.about.html')
-
-
-@app.route('/login')
-def login():
-    form = LoginForm(request.form)
-    return render_template('forms/login.html', form=form)
-
-
-@app.route('/register')
-def register():
-    form = RegisterForm(request.form)
-    return render_template('forms/register.html', form=form)
-
-
-@app.route('/forgot')
-def forgot():
-    form = ForgotForm(request.form)
-    return render_template('forms/forgot.html', form=form)
-
 # Error handlers.
 
 

@@ -1,7 +1,7 @@
 import { Notifications } from 'expo';
 import * as Permissions from 'expo-permissions';
 
-const PUSH_ENDPOINT = '//bigrip.ocf.berkeley.edu:5000/new';
+const PUSH_ENDPOINT = '//bigrip.ocf.berkeley.edu:5000/register';
 
 /**
  * Connects to the server for push notifications.
@@ -32,10 +32,7 @@ export default async function registerForPushNotificationsAsync() {
         body: JSON.stringify({
             token: {
                 value: token,
-            },
-            user: {
-                username: 'Brent',
-            },
+            }
         }),
     });
 }

@@ -1,11 +1,14 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
+import AppContainer from './AppContainer';
+
 
 export default function App() {
   init();
   return (
     <View style={styles.container}>
-      <Text>Open up App.tsx to start working on your app...</Text>
+      <Text>Open up App.tsx to start working on your app!</Text>
+      <AppContainer/>
     </View>
   );
 }
