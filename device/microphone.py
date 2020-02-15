@@ -4,7 +4,7 @@ import time
 from aiy.board import Board
 from aiy.voice.audio import AudioFormat, record_file, play_wav
 
-TEST_SOUND = '/usr/share/soundss/alsa/Front_Center.wav'
+TEST_SOUND = '/usr/share/sounds/alsa/Front_Center.wav'
 FILENAME = 'recording.wav'
 
 def main():
