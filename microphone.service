@@ -1,0 +1,16 @@
+[Unit]
+Description=Assistant gRPC Demo
+Wants=network-online.target
+After=network-online.target
+Wants=systemd-timesyncd.service
+After=systemd-timesyncd.service
+
+[Service]
+Environment=DISPLAY=:0
+Type=simple
+Restart=always
+User=pi
+ExecStart=/usr/bin/python3 -u /home/pi/Desktop/baby_interpreter/device/microphone.py
+
+[Install]
+WantedBy=multi-user.target
