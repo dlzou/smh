@@ -10,15 +10,12 @@ import requests
 import threading
 import traceback
 import time
-from aiy.board import Board, Led
-from aiy.voice.audio import AudioFormat, record_file, play_wav
 
 from scipy.stats import mode
 
 moodDic = {'alarm': 0, 'cry': 1,
                'glass': 2, "gun": 3, "water": 4}
-
-tree = {}
+tree = 'Tree Placeholder'
 
 class TreeNode:
     def __init__(self, left=None, right=None, split_fn=None, leaf_evaluate=None):
@@ -111,7 +108,7 @@ def predict(X, tree):
 
 def parser(label, fileName):
     # function to load files and extract features
-    file_name = os.path.join('./sound-downloader/'+ str(label) + '/' + str(fileName))
+    file_name = os.path.join('../classfier/sound-downloader/'+ str(label) + '/' + str(fileName))
     # handle exception to check if there isn't a file which is corrupted
     try:
         # here kaiser_fast is a technique used for faster extraction
@@ -128,7 +125,7 @@ def parser(label, fileName):
 
 
 def getFiles(mood):
-    filePath = os.path.join("./sound-downloader", str(mood))
+    filePath = os.path.join("../classfier/sound-downloader", str(mood))
     files = list()
     for i in os.listdir(filePath):
         if i.endswith('.wav'):
@@ -136,7 +133,8 @@ def getFiles(mood):
     return files
 
 def doTrainRoutine():
-    nonlocal tree
+    global tree
+
     fullData = []
     for j in moodDic.keys():
         fList = getFiles(str(j))
@@ -173,8 +171,7 @@ def doTrainRoutine():
     print(accuracy(preds,Y_test_sound))
 
 def predictor(fileN):
-    file_name = os.path.join('./sound-downloader/testing/' + str(fileN))
-
+    file_name = os.path.join('../classfier/sound-downloader/testing/' + str(fileN))
     # handle exception to check if there isn't a file which is corrupted
     try:
         # here kaiser_fast is a technique used for faster extraction
@@ -221,7 +218,7 @@ def main():
 
             record_file(AudioFormat.CD, filename=FILENAME, wait=wait(done), filetype='wav')
 
-            # run classifier
+            # run classfier
             stateNum = predictor(FILENAME)
             state = 'none'
             for name, num in moodDic.items():
@@ -250,15 +247,26 @@ def loop():
 
 def audioLoop():
   threading.Timer(10.0, audioLoop).start()
-  print("Accepting audio...")
-  if(os.path.exists('./sound-downloader/testing/recording.wav')):
-      print('File found. Processing...')
-      print(predictor('recording.wav'))
+#   print("Accepting audio...")
+  if(os.path.exists('../classfier/sound-downloader/testing/recording.wav')):
+    print('File found. Processing...')
+    stateNum = predictor('recording.wav')
+    state = 'none'
+    for name, num in moodDic.items():
+        if num == stateNum:
+            state = name
+    print(state)
+    payload = {'type': state}
+    headers = {'Accept': 'application/json', 'Content-Type': 'application/json'}
+    r = requests.post('http://bigrip.ocf.berkeley.edu:5000/notify', json=payload, headers=headers)
+    print(r.status_code)
+    os.remove('../classfier/sound-downloader/testing/recording.wav')
 
-printit()
+# printit()
 
 if __name__ == '__main__':
     try:
-        main()
+        # main()
+        print('test')
     except Exception:
         traceback.print_exc()

@@ -8,20 +8,24 @@ import logging
 from logging import Formatter, FileHandler
 from forms import *
 import os
+import sys
 from sys import stderr
 import json
+import threading
 from exponent_server_sdk import PushClient
 from exponent_server_sdk import PushMessage
 from exponent_server_sdk import PushResponseError
 from exponent_server_sdk import PushServerError
 from requests.exceptions import ConnectionError
 from requests.exceptions import HTTPError
+from babyClass import loop
 
 #----------------------------------------------------------------------------#
 # Data
 #----------------------------------------------------------------------------#
 tokens = []
 TEST_TOKEN = 'ExponentPushToken[2AOjhoJRkkJVEpl2FoWwuc]'
+EXTENSIONS = ['wav', 'mp3']
 events = []
 
 #----------------------------------------------------------------------------#
@@ -100,6 +104,8 @@ def send_push_message(token, message, extra=None):
             })
         raise self.retry(exc=exc)
 
+def valid_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in EXTENSIONS
 #----------------------------------------------------------------------------#
 # Controllers.
 #----------------------------------------------------------------------------#
@@ -112,6 +118,14 @@ def home():
 @app.route('/getdata', methods=['GET'])
 def getData():
     return json.dumps(events)
+
+@app.route('/sendaudio', methods=['POST'])
+def send_audio():
+    print(request.files)
+    f = request.files.get('file', None)
+    if f and valid_file(f.filename):
+        f.save('../classfier/sound-downloader/testing/recording.wav')
+    return '''<h1>Audio sent</h1>'''
 
 @app.route('/notify', methods=['POST'])
 def notify():
@@ -163,6 +177,7 @@ if not app.debug:
 
 # Default port:
 if __name__ == '__main__':
+    threading.Thread(target=loop).start()
     app.run(host='bigrip.ocf.berkeley.edu')
 
 # Or specify port manually:
