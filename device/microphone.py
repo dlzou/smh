@@ -46,6 +46,7 @@ def wait(done):
             duration = time.monotonic() - start
             print('Recording: %.02f seconds [Press button to stop]' % duration)
             time.sleep(0.5)
+    return _helper
 
 
 if __name__ == '__main__':
