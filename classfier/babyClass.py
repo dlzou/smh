@@ -6,7 +6,12 @@ import os
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_log_error
+import requests
 import threading
+import traceback
+import time
+from aiy.board import Board, Led
+from aiy.voice.audio import AudioFormat, record_file, play_wav
 
 from scipy.stats import mode
 
@@ -146,9 +151,9 @@ def doTrainRoutine():
     for label in baby.index:
         for lst in baby.loc[label]:
             for soundFile in lst:      
-            features = parser(label, soundFile)
-            soundDic[fileNum] = features
-            fileNum += 1
+                features = parser(label, soundFile)
+                soundDic[fileNum] = features
+                fileNum += 1
 
 
     sound = pd.DataFrame.from_dict(data = soundDic, orient = 'index',columns=['type'] + list(range(0, 40)))
@@ -180,7 +185,7 @@ def predictor(fileN):
 
     return predict(feature, tree)
 
-print('actual: gun, predicted:', predictor('gun2.wav'))
+# print('actual: gun, predicted:', predictor('gun2.wav'))
 #########################################################
 
 TEST_SOUND = '/usr/share/sounds/alsa/Front_Center.wav'
