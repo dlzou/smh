@@ -165,6 +165,22 @@ print(len(X_train_sound), len(Y_train_sound))
 tree = train(X_train_sound, Y_train_sound)
 preds = predict(X_test_sound, tree)
 
-print(accuracy(preds, Y_test_sound))
+def predictor(fileN):
+    file_name = os.path.join('./unknown/' + str(fileN))
+    # handle exception to check if there isn't a file which is corrupted
+    try:
+        # here kaiser_fast is a technique used for faster extraction
+        X, sample_rate = librosa.load(file_name, res_type='kaiser_fast')
+        # we extract mfcc feature from data
+        mfccs = np.mean(librosa.feature.mfcc(
+            y=X, sr=sample_rate, n_mfcc=40).T, axis=0)
+        feature = mfccs
+    except Exception as e:
+        print("Error encountered while parsing file: ", fileN)
+        return []
 
+    return predict(feature, tree)
+print(predictor('test.wav'))
+
+    
 
