@@ -51,8 +51,12 @@ def main():
             # headers = {'Accept': 'application/json', 'Content-Type': 'application/json'}
             # r = requests.post('http://bigrip.ocf.berkeley.edu:5000/notify', json=payload, headers=headers)
             with open(FILENAME, 'rb') as file:
-                r = requests.post('http://bigrip.ocf.berkeley.edu:5000/sendaudio', data=file)
-            print(r.status_code)
+                try:
+                    r = requests.post('http://bigrip.ocf.berkeley.edu:5000/sendaudio', data=file)
+                except Exception:
+                    print('Exception occurred at POST request.')
+                finally:
+                    print(r.status_code)
 
 def wait(done):
     def _helper():
