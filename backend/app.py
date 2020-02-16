@@ -25,6 +25,7 @@ from babyClass import loop
 #----------------------------------------------------------------------------#
 tokens = []
 TEST_TOKEN = 'ExponentPushToken[2AOjhoJRkkJVEpl2FoWwuc]'
+EXTENSIONS = ['wav', 'mp3']
 events = []
 
 #----------------------------------------------------------------------------#
@@ -103,6 +104,8 @@ def send_push_message(token, message, extra=None):
             })
         raise self.retry(exc=exc)
 
+def valid_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in EXTENSIONS
 #----------------------------------------------------------------------------#
 # Controllers.
 #----------------------------------------------------------------------------#
@@ -118,9 +121,11 @@ def getData():
 
 @app.route('/sendaudio', methods=['POST'])
 def send_audio():
-    f = request.files.get('audio', None)
+    print(request.files)
+    f = request.files.get('file', None)
     if f and valid_file(f.filename):
-        f.save('../classifier/sound-downloader/testing/recording.wav')
+        f.save('../classfier/sound-downloader/testing/recording.wav')
+    return '''<h1>Audio sent</h1>'''
 
 @app.route('/notify', methods=['POST'])
 def notify():
@@ -172,7 +177,7 @@ if not app.debug:
 
 # Default port:
 if __name__ == '__main__':
-    # threading.Thread(target=loop).start()
+    threading.Thread(target=loop).start()
     app.run(host='bigrip.ocf.berkeley.edu')
 
 # Or specify port manually:

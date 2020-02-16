@@ -18,6 +18,8 @@ from scipy.stats import mode
 moodDic = {'alarm': 0, 'cry': 1,
                'glass': 2, "gun": 3, "water": 4}
 
+tree = {}
+
 class TreeNode:
     def __init__(self, left=None, right=None, split_fn=None, leaf_evaluate=None):
         self.left = left
@@ -134,6 +136,7 @@ def getFiles(mood):
     return files
 
 def doTrainRoutine():
+    nonlocal tree
     fullData = []
     for j in moodDic.keys():
         fList = getFiles(str(j))
