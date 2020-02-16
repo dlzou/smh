@@ -55,7 +55,9 @@ def main():
             # r = requests.post('http://bigrip.ocf.berkeley.edu:5000/notify', json=payload, headers=headers)
             with open(FILENAME, 'rb') as file:
                 try:
-                    requests.post('http://bigrip.ocf.berkeley.edu:5000/sendaudio', data=file)
+                    f = {'file': file}
+                    r = requests.post('http://bigrip.ocf.berkeley.edu:5000/sendaudio', files=f)
+                    print(r.status_code)
                 except Exception:
                     print('Exception occurred at POST request.')
 
