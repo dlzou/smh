@@ -22,14 +22,14 @@ def main():
             done = threading.Event()
             board.button.when_pressed = done.set
 
-            def wait():
-                start = time.monotonic()
-                while not done.is_set():
-                    duration = time.monotonic() - start
-                    print('Recording: %.02f seconds [Press button to stop]' % duration)
-                    time.sleep(0.5)
+            # def wait():
+            #     start = time.monotonic()
+            #     while not done.is_set():
+            #         duration = time.monotonic() - start
+            #         print('Recording: %.02f seconds [Press button to stop]' % duration)
+            #         time.sleep(0.5)
 
-            record_file(AudioFormat.CD, filename=FILENAME, wait=wait, filetype='wav')
+            record_file(AudioFormat.CD, filename=FILENAME, wait=wait(done), filetype='wav')
 
             # run classifier
             state = 'hungry'
@@ -38,6 +38,14 @@ def main():
             headers = {'Accept': 'application/json', 'Content-Type': 'application/json'}
             r = requests.post('http://bigrip.ocf.berkeley.edu:5000/notify', json=payload, headers=headers)
             print(r.status_code)
+
+def wait(done):
+    def _helper():
+        start = time.monotonic()
+        while not done.is_set():
+            duration = time.monotonic() - start
+            print('Recording: %.02f seconds [Press button to stop]' % duration)
+            time.sleep(0.5)
 
 
 if __name__ == '__main__':
