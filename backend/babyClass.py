@@ -10,8 +10,6 @@ import requests
 import threading
 import traceback
 import time
-from aiy.board import Board, Led
-from aiy.voice.audio import AudioFormat, record_file, play_wav
 
 from scipy.stats import mode
 
@@ -109,7 +107,7 @@ def predict(X, tree):
 
 def parser(label, fileName):
     # function to load files and extract features
-    file_name = os.path.join('./sound-downloader/'+ str(label) + '/' + str(fileName))
+    file_name = os.path.join('../classifier/sound-downloader/'+ str(label) + '/' + str(fileName))
     # handle exception to check if there isn't a file which is corrupted
     try:
         # here kaiser_fast is a technique used for faster extraction
@@ -126,7 +124,7 @@ def parser(label, fileName):
 
 
 def getFiles(mood):
-    filePath = os.path.join("./sound-downloader", str(mood))
+    filePath = os.path.join("../classifier/sound-downloader", str(mood))
     files = list()
     for i in os.listdir(filePath):
         if i.endswith('.wav'):
@@ -170,8 +168,7 @@ def doTrainRoutine():
     print(accuracy(preds,Y_test_sound))
 
 def predictor(fileN):
-    file_name = os.path.join('./sound-downloader/testing/' + str(fileN))
-
+    file_name = os.path.join('../classifier/sound-downloader/testing/' + str(fileN))
     # handle exception to check if there isn't a file which is corrupted
     try:
         # here kaiser_fast is a technique used for faster extraction
@@ -248,14 +245,15 @@ def loop():
 def audioLoop():
   threading.Timer(10.0, audioLoop).start()
   print("Accepting audio...")
-  if(os.path.exists('./sound-downloader/testing/recording.wav')):
+  if(os.path.exists('../classifier/sound-downloader/testing/recording.wav')):
       print('File found. Processing...')
       print(predictor('recording.wav'))
 
-printit()
+# printit()
 
 if __name__ == '__main__':
     try:
-        main()
+        # main()
+        print('test')
     except Exception:
         traceback.print_exc()

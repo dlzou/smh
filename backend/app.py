@@ -8,14 +8,17 @@ import logging
 from logging import Formatter, FileHandler
 from forms import *
 import os
+import sys
 from sys import stderr
 import json
+import threading
 from exponent_server_sdk import PushClient
 from exponent_server_sdk import PushMessage
 from exponent_server_sdk import PushResponseError
 from exponent_server_sdk import PushServerError
 from requests.exceptions import ConnectionError
 from requests.exceptions import HTTPError
+from babyClass import loop
 
 #----------------------------------------------------------------------------#
 # Data
@@ -113,6 +116,12 @@ def home():
 def getData():
     return json.dumps(events)
 
+@app.route('/sendaudio', methods=['POST'])
+def send_audio():
+    f = request.files.get('audio', None)
+    if f and valid_file(f.filename):
+        f.save('../classifier/sound-downloader/testing/recording.wav')
+
 @app.route('/notify', methods=['POST'])
 def notify():
     notify_type = request.json['type']
@@ -163,6 +172,7 @@ if not app.debug:
 
 # Default port:
 if __name__ == '__main__':
+    # threading.Thread(target=loop).start()
     app.run(host='bigrip.ocf.berkeley.edu')
 
 # Or specify port manually:
