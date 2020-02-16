@@ -14,7 +14,7 @@ def main():
 
     with Board() as board:
         while True:
-            board.led.state = Led.BEACON_DARK
+            board.led.state = Led.OFF
             print('Press button to start recording...')
             board.button.wait_for_press()
             board.led.state = Led.ON
