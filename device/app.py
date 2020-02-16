@@ -9,8 +9,8 @@ abs_path = os.path.abspath(__file__)
 home_dir = os.path.dirname(abs_path)
 
 UPLOAD_PATH = os.path.join(home_dir, 'uploaded')
-SANITIZED_PATH = os.path.join(home_dir, 'sanitized')
-EXTENSIONS = ['wav', 'mp3']
+SANITIZED_PATH = os.path.join(home_dir, 'saflashnitized')
+EXTENSIONS = ['wav', 'raw']
 
 @app.route('/', methods=['POST'])
 def process_audio():
