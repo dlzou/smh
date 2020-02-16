@@ -56,10 +56,9 @@ def main():
             with open(FILENAME, 'rb') as file:
                 try:
                     r = requests.post('http://bigrip.ocf.berkeley.edu:5000/sendaudio', data=file)
+                    print(r.status_code)
                 except Exception:
                     print('Exception occurred at POST request.')
-                finally:
-                    print(r.status_code)
 
 def wait(done):
     def _helper():
