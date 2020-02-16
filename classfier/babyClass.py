@@ -6,9 +6,17 @@ import os
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_log_error
+import requests
+import threading
+import traceback
+import time
+from aiy.board import Board, Led
+from aiy.voice.audio import AudioFormat, record_file, play_wav
 
 from scipy.stats import mode
 
+moodDic = {'alarm': 0, 'cry': 1,
+               'glass': 2, "gun": 3, "water": 4}
 
 class TreeNode:
     def __init__(self, left=None, right=None, split_fn=None, leaf_evaluate=None):
@@ -100,10 +108,8 @@ def predict(X, tree):
 
 
 def parser(label, fileName):
-    moodDic = {'belly_pain': 0, 'burping': 1,
-               'discomfort': 2, "hungry": 3, "tired": 4}
     # function to load files and extract features
-    file_name = os.path.join('./rawData/'+ str(label) + '/' + str(fileName))
+    file_name = os.path.join('./sound-downloader/'+ str(label) + '/' + str(fileName))
     # handle exception to check if there isn't a file which is corrupted
     try:
         # here kaiser_fast is a technique used for faster extraction
@@ -120,53 +126,52 @@ def parser(label, fileName):
 
 
 def getFiles(mood):
-    filePath = os.path.join("./rawData", str(mood))
+    filePath = os.path.join("./sound-downloader", str(mood))
     files = list()
     for i in os.listdir(filePath):
         if i.endswith('.wav'):
             files.append(i)
     return files
 
+def doTrainRoutine():
+    fullData = []
+    for j in moodDic.keys():
+        fList = getFiles(str(j))
+        fullData.append((j,fList))
+    baby = pd.DataFrame(fullData, columns = ['type', 'file']).set_index('type')
+
+    #curFile = baby.loc['belly_pain']['file'][0]
+
+    #x1 = parser('belly_pain', '549a46d8-9c84-430e-ade8-97eae2bef787-1430130772174-1.7-m-48-bp.wav')
+    #print(x1)
 
 
-fullData = []
-for j in os.listdir("rawData"):
-    fList = getFiles(str(j))
-    fullData.append((j,fList))
-baby = pd.DataFrame(fullData, columns = ['mood', 'file']).set_index('mood')
-
-#curFile = baby.loc['belly_pain']['file'][0]
-
-#x1 = parser('belly_pain', '549a46d8-9c84-430e-ade8-97eae2bef787-1430130772174-1.7-m-48-bp.wav')
-#print(x1)
+    fileNum = 0
+    soundDic = {}
+    for label in baby.index:
+        for lst in baby.loc[label]:
+            for soundFile in lst:      
+                features = parser(label, soundFile)
+                soundDic[fileNum] = features
+                fileNum += 1
 
 
-fileNum = 0
-soundDic = {}
-for label in baby.index:
-    for lst in baby.loc[label]:
-        for soundFile in lst:      
-           features = parser(label, soundFile)
-           soundDic[fileNum] = features
-           fileNum += 1
+    sound = pd.DataFrame.from_dict(data = soundDic, orient = 'index',columns=['type'] + list(range(0, 40)))
 
+    X = sound.iloc[:, 1:].values
+    Y = sound.iloc[:, 0].values
 
-
-
-sound = pd.DataFrame.from_dict(data = soundDic, orient = 'index',columns=['mood'] + list(range(0, 40)))
-
-X = sound.iloc[:, 1:].values
-Y = sound.iloc[:, 0].values
-
-X_train_sound, X_test_sound, Y_train_sound, Y_test_sound = train_test_split(
-    X, Y, test_size=0.2, random_state=0)
-print(sound)
-print(len(X_train_sound), len(Y_train_sound))    
-tree = train(X_train_sound, Y_train_sound)
-preds = predict(X_test_sound, tree)
+    X_train_sound, X_test_sound, Y_train_sound, Y_test_sound = train_test_split(
+        X, Y, test_size=0.2, random_state=0)
+    print(sound)
+    print(len(X_train_sound), len(Y_train_sound))    
+    tree = train(X_train_sound, Y_train_sound)
+    preds = predict(X_test_sound, tree)
+    print(accuracy(preds,Y_test_sound))
 
 def predictor(fileN):
-    file_name = os.path.join('./unknown/' + str(fileN))
+    file_name = os.path.join('./sound-downloader/testing/' + str(fileN))
+
     # handle exception to check if there isn't a file which is corrupted
     try:
         # here kaiser_fast is a technique used for faster extraction
@@ -180,7 +185,63 @@ def predictor(fileN):
         return []
 
     return predict(feature, tree)
-print(predictor('test.wav'))
 
-    
+# print('actual: gun, predicted:', predictor('gun2.wav'))
+#########################################################
 
+TEST_SOUND = '/usr/share/sounds/alsa/Front_Center.wav'
+FILENAME = 'recording.wav'
+
+def main():
+    print('Beginning training...')
+    doTrainRoutine()
+    print('TRAINING COMPLETE')
+    print('Playing test sound...')
+    play_wav(TEST_SOUND)
+
+    with Board() as board:
+        while True:
+            board.led.state = Led.OFF
+            print('Press button to start recording...')
+            board.button.wait_for_press()
+            board.led.state = Led.ON
+
+            done = threading.Event()
+            board.button.when_pressed = done.set
+
+            # def wait():
+            #     start = time.monotonic()
+            #     while not done.is_set():
+            #         duration = time.monotonic() - start
+            #         print('Recording: %.02f seconds [Press button to stop]' % duration)
+            #         time.sleep(0.5)
+
+            record_file(AudioFormat.CD, filename=FILENAME, wait=wait(done), filetype='wav')
+
+            # run classifier
+            stateNum = predictor(FILENAME)
+            state = 'none'
+            for name, num in moodDic.items():
+                if num == stateNum:
+                    state = name
+            print(state)
+            payload = {'type': state}
+            headers = {'Accept': 'application/json', 'Content-Type': 'application/json'}
+            r = requests.post('http://bigrip.ocf.berkeley.edu:5000/notify', json=payload, headers=headers)
+            print(r.status_code)
+
+def wait(done):
+    def _helper():
+        start = time.monotonic()
+        while not done.is_set():
+            duration = time.monotonic() - start
+            print('Recording: %.02f seconds [Press button to stop]' % duration)
+            time.sleep(0.5)
+    return _helper
+
+
+if __name__ == '__main__':
+    try:
+        main()
+    except Exception:
+        traceback.print_exc()

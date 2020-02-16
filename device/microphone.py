@@ -1,7 +1,8 @@
 import requests
 import threading
+import traceback
 import time
-from aiy.board import Board
+from aiy.board import Board, Led
 from aiy.voice.audio import AudioFormat, record_file, play_wav
 
 TEST_SOUND = '/usr/share/sounds/alsa/Front_Center.wav'
@@ -12,6 +13,7 @@ def main():
     play_wav(TEST_SOUND)
 
     with Board() as board:
+
         print('Press button to start recording...')
         board.button.wait_for_press()
 
@@ -35,7 +37,6 @@ def main():
         headers = {'content-type': 'application/json'}
         r = requests.post('http://bigrip.ocf.berkeley.edu:5000/notify', data=payload, headers=headers)
         print(r.status_code)
-
 
 if __name__ == '__main__':
     try:

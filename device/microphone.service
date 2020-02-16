@@ -10,7 +10,7 @@ Environment=DISPLAY=:0
 Type=simple
 Restart=always
 User=pi
-ExecStart=/usr/bin/python3 -u /home/pi/Desktop/baby_interpreter/device/microphone.py
+ExecStart=/usr/bin/python3 -u /home/pi/Desktop/baby-interpreter/device/microphone.py
 
 [Install]
 WantedBy=multi-user.target

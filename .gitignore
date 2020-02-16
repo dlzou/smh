@@ -130,3 +130,5 @@ dmypy.json
 
 # VC Code
 .vscode/
+fastai_audio/
+

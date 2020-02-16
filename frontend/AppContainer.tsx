@@ -2,8 +2,8 @@ import React from 'react';
 import { Notifications } from 'expo';
 import { Text, View } from 'react-native';
 
-// This refers to the function defined earlier in this guide
 import registerForPushNotificationsAsync from './js/notifications';
+import { data, getData } from './js/display';
 
 export default class AppContainer extends React.Component {
     state = {
@@ -12,6 +12,8 @@ export default class AppContainer extends React.Component {
 
     componentDidMount() {
         registerForPushNotificationsAsync();
+
+        setInterval(() => {getData()}, 1000);
 
         // Handle notifications that are received or selected while the app
         // is open. If the app was closed and then opened by tapping the
@@ -28,9 +30,10 @@ export default class AppContainer extends React.Component {
 
     render() {
         return (
-            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-                <Text>Origin: {this.state.notification.origin}</Text>
-                <Text>Data: {JSON.stringify(this.state.notification.data)}</Text>
+            <View style={{ flex: 1, justifyContent: 'center' }}>
+                {data.map((row, index) => (
+                    <Text key={index}>Row: {row}</Text>
+                ))}
             </View>
         );
     }

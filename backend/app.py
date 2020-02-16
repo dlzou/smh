@@ -22,6 +22,7 @@ from requests.exceptions import HTTPError
 #----------------------------------------------------------------------------#
 tokens = []
 TEST_TOKEN = 'ExponentPushToken[2AOjhoJRkkJVEpl2FoWwuc]'
+events = []
 
 #----------------------------------------------------------------------------#
 # App Config.
@@ -108,12 +109,17 @@ def send_push_message(token, message, extra=None):
 def home():
     return render_template('pages/placeholder.home.html')
 
+@app.route('/getdata', methods=['GET'])
+def getData():
+    return json.dumps(events)
+
 @app.route('/notify', methods=['POST'])
 def notify():
     notify_type = request.json['type']
     print(notify_type, 'NOTIFIED', file=stderr)
     # if (len(tokens) > 0):
-    send_push_message(TEST_TOKEN, notify_type       )
+    send_push_message(TEST_TOKEN, notify_type)
+    events.append(notify_type)
     # else:
     # print('Notification not sent: no token found', file=stderr)
         
