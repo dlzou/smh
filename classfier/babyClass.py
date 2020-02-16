@@ -9,6 +9,8 @@ from sklearn.metrics import mean_squared_log_error
 
 from scipy.stats import mode
 
+moodDic = {'alarm': 0, 'cry': 1,
+               'glass': 2, "gun": 3, "water": 4}
 
 class TreeNode:
     def __init__(self, left=None, right=None, split_fn=None, leaf_evaluate=None):
@@ -100,8 +102,6 @@ def predict(X, tree):
 
 
 def parser(label, fileName):
-    moodDic = {'alarm': 0, 'cry': 1,
-               'glass': 2, "gun": 3, "water": 4, "other": 5}
     # function to load files and extract features
     file_name = os.path.join('./sound-downloader/'+ str(label) + '/' + str(fileName))
     # handle exception to check if there isn't a file which is corrupted
@@ -130,7 +130,7 @@ def getFiles(mood):
 
 
 fullData = []
-for j in os.listdir("sound-downloader"):
+for j in moodDic.keys():
     fList = getFiles(str(j))
     fullData.append((j,fList))
 baby = pd.DataFrame(fullData, columns = ['type', 'file']).set_index('type')
@@ -151,8 +151,6 @@ for label in baby.index:
            fileNum += 1
 
 
-
-
 sound = pd.DataFrame.from_dict(data = soundDic, orient = 'index',columns=['type'] + list(range(0, 40)))
 
 X = sound.iloc[:, 1:].values
@@ -166,7 +164,7 @@ tree = train(X_train_sound, Y_train_sound)
 preds = predict(X_test_sound, tree)
 print(accuracy(preds,Y_test_sound))
 def predictor(fileN):
-    file_name = os.path.join('./*****/' + str(fileN))
+    file_name = os.path.join('./sound-downloader/testing/' + str(fileN))
     # handle exception to check if there isn't a file which is corrupted
     try:
         # here kaiser_fast is a technique used for faster extraction
@@ -180,7 +178,7 @@ def predictor(fileN):
         return []
 
     return predict(feature, tree)
-#print(predictor('test.wav'))
+print('actual: gun, predicted:', predictor('gun2.wav'))
 
     
 

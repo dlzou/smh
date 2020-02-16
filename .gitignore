@@ -130,5 +130,4 @@ dmypy.json
 
 # VC Code
 .vscode/
-
-*.wav
+fastai_audio/
