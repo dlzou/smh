@@ -1,5 +1,6 @@
 import requests
 import threading
+import traceback
 import time
 from aiy.board import Board
 from aiy.voice.audio import AudioFormat, record_file, play_wav
@@ -40,5 +41,5 @@ def main():
 if __name__ == '__main__':
     try:
         main()
-    except:
-        print("Whoops")
+    except Exception:
+        traceback.print_exc()
