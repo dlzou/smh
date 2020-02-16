@@ -1,12 +1,14 @@
+from aiy.board import Board, Led
+from aiy.voice.audio import AudioFormat, record_file, play_wav
 import requests
 import threading
 import traceback
 import time
-from aiy.board import Board, Led
-from aiy.voice.audio import AudioFormat, record_file, play_wav
+import os
 
 TEST_SOUND = '/usr/share/sounds/alsa/Front_Center.wav'
 FILENAME = 'recording.wav'
+CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 
 # IGNORE, NOT USED
 class UniqueID:
@@ -43,6 +45,7 @@ def main():
             board.button.when_pressed = done.set
 
             record_file(AudioFormat.CD, filename=FILENAME, wait=wait(done), filetype='wav')
+            play_wav(os.path.join(CURRENT_DIR, FILENAME))
 
             # run classifier
             # state = 'hungry'
