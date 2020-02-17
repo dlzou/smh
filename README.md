@@ -1,3 +1,5 @@
+# SMH: Smart Monitor for Homes
+
 ## Inspiration
 At the opening ceremony Daniel brought up the idea of making a fake news app but Ben misheard because it was too loud and thought he said 'baby sounds'. So we started making an app that tried to interpret baby sounds and predict what they meant (if the baby was hungry, tired, etc.)
 
