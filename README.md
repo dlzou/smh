@@ -1,4 +1,5 @@
 # SMH: Smart Monitor for Homes
+2020 TreeHacks project by Ben Cuan, Minh Phan, and Daniel Zou.
 
 ## Inspiration
 At the opening ceremony Daniel brought up the idea of making a fake news app but Ben misheard because it was too loud and thought he said 'baby sounds'. So we started making an app that tried to interpret baby sounds and predict what they meant (if the baby was hungry, tired, etc.)
