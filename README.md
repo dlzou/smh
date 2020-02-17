@@ -2,12 +2,12 @@
 2020 TreeHacks project by Ben Cuan, Minh Phan, and Daniel Zou.
 
 ## Inspiration
-At the opening ceremony Daniel brought up the idea of making a fake news app but Ben misheard because it was too loud and thought he said 'baby sounds'. So we started making an app that tried to interpret baby sounds and predict what they meant (if the baby was hungry, tired, etc.)
+At the opening ceremony Daniel brought up the idea of making a "fake news" app but Ben misheard because it was too loud and thought he said "baby noises." So we started making an app that tried to interpret baby sounds and predict what they meant (if the baby was hungry, tired, etc.)
 
 However, the data available was quite lackluster, so instead we repurposed our classifier to instead detect sounds associated with home emergencies (broken glass, smoke alarm, etc) and alert users accordingly.
 
 ## What it does
-A smart monitor (Google AIY kit with Raspberry Pi) listens for sounds associated with emergencies. If such a sound is detected, a notification will be sent to the mobile app notifying users of a possible emergency.
+A smart monitor (Google AIY voice kit with Raspberry Pi) listens for sounds associated with emergencies. If such a sound is detected, a notification will be sent to the mobile app notifying users of a possible emergency.
 
 ## How we built it
 First, we used the AIY voice kit to capture audio and save it locally in the monitor.
