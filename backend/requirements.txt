@@ -9,7 +9,7 @@ chardet==3.0.4
 Click==7.0
 coverage==5.0.3
 cracklib==2.9.2
-cryptography==2.8
+cryptography==3.2
 distlib==0.3.0
 dnspython==1.15.0
 exponent-server-sdk==0.3.1
